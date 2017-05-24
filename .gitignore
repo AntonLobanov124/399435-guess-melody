@@ -1,4 +1,4 @@
-.DS_Store
+﻿.DS_Store
 .idea
 *.ai
 *.log
@@ -8,3 +8,5 @@
 build/
 node_modules/
 Thumbs.db
+/.vs
+*.sln
