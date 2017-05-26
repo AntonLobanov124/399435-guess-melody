@@ -24,7 +24,7 @@
   }
 
   function showScreen(index = 0) {
-    if (index > _templatesNodeList.length - 1 || index > _screenIndexes.length || index < 0) {
+    if (index > _templatesNodeList.length - 1 || index > _screenIndexes.length - 1 || index < 0) {
       return;
     }
 
