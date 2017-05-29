@@ -10,7 +10,7 @@
     const KEY_RIGHT = 39;
 
     if (evt.altKey) {
-      switch(evt.keyCode) {
+      switch (evt.keyCode) {
         case KEY_LEFT:
           showScreen(currentScreen - 1);
           break;
