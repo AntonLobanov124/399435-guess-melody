@@ -1,44 +1,48 @@
-﻿window.main = function () {
-  const _mainNode = document.querySelector(`.main`);
-  const _templatesNodeList = document.querySelector(`#templates`).content.children;
-  const _screenIndexes = [5, 0, 1, 4, 3, 2];
+﻿(function () {
+  const mainNode = document.querySelector(`.main`);
+  const templatesNodeList = document.querySelector(`#templates`).content.querySelectorAll(`.main`);
+  const screenIndexes = [4, 0, 3, 2, 1];
 
-  let _currentScreen = 0;
+  let currentScreen = 0;
 
   function keyPressHandler(evt) {
     const KEY_LEFT = 37;
     const KEY_RIGHT = 39;
+
     if (evt.altKey) {
-      if (evt.keyCode === KEY_LEFT) {
-        showScreen(_currentScreen - 1);
-      } else if (evt.keyCode === KEY_RIGHT) {
-        showScreen(_currentScreen + 1);
+      switch(evt.keyCode) {
+        case KEY_LEFT:
+          showScreen(currentScreen - 1);
+          break;
+        case KEY_RIGHT:
+          showScreen(currentScreen + 1);
+          break;
       }
     }
   }
 
   function clearMainNode() {
-    while (_mainNode.lastChild) {
-      _mainNode.removeChild(_mainNode.lastChild);
+    while (mainNode.lastChild) {
+      mainNode.removeChild(mainNode.lastChild);
     }
   }
 
   function showScreen(index = 0) {
-    if (index > _templatesNodeList.length - 1 || index > _screenIndexes.length - 1 || index < 0) {
+    if (index > templatesNodeList.length - 1 || index > screenIndexes.length - 1 || index < 0) {
       return;
     }
 
-    _currentScreen = index;
+    currentScreen = index;
 
     clearMainNode();
 
-    _mainNode.appendChild(_templatesNodeList[_screenIndexes[index]].cloneNode(true));
+    mainNode.appendChild(templatesNodeList[screenIndexes[index]].cloneNode(true));
   }
 
   function init() {
-    showScreen(_currentScreen);
+    showScreen(currentScreen);
     document.addEventListener(`keyup`, keyPressHandler);
   }
 
   init();
-}();
+}());
