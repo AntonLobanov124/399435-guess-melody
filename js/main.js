@@ -1,4 +1,4 @@
-﻿import * as screenManager from './screenManager';
+﻿import {showScreen} from './screenManager';
 import welcome from './screens/welcome';
 
-screenManager.showScreen(welcome);
+showScreen(welcome);

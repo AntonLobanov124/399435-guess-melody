@@ -1,5 +1,5 @@
-import * as utils from '../utils';
-import * as screenManager from '../screenManager';
+import {getElementFromTemplate} from '../utils';
+import {showScreen} from '../screenManager';
 import levelArtist from './levelArtist';
 
 const html = `<section class="main main--welcome">
@@ -13,10 +13,10 @@ const html = `<section class="main main--welcome">
     </p>
   </section>`;
 
-const element = utils.getElementFromTemplate(html);
+const element = getElementFromTemplate(html);
 
 element.querySelector(`.main-play`).addEventListener(`click`, (evt) => {
-  screenManager.showScreen(levelArtist);
+  showScreen(levelArtist);
 });
 
 export default element;

@@ -1,5 +1,5 @@
-import * as utils from '../utils';
-import * as screenManager from '../screenManager';
+import {getElementFromTemplate} from '../utils';
+import {showScreen} from '../screenManager';
 import levelGenre from './levelGenre';
 
 const html = `<section class="main main--level main--level-artist">
@@ -49,11 +49,11 @@ const html = `<section class="main main--level main--level-artist">
     </div>
   </section>`;
 
-const element = utils.getElementFromTemplate(html);
+const element = getElementFromTemplate(html);
 
 Array.from(element.querySelectorAll(`.main-answer`)).forEach((el, index, array) => {
   el.addEventListener(`click`, (evt) => {
-    screenManager.showScreen(levelGenre);
+    showScreen(levelGenre);
   });
 });
 

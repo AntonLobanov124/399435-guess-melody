@@ -1,5 +1,5 @@
-import * as utils from '../utils';
-import * as screenManager from '../screenManager';
+import {getElementFromTemplate} from '../utils';
+import {showScreen} from '../screenManager';
 import welcome from './welcome';
 
 const html = `<section class="main main--result">
@@ -10,10 +10,10 @@ const html = `<section class="main main--result">
     <span role="button" tabindex="0" class="main-replay">Сыграть ещё раз</span>
   </section>`;
 
-const element = utils.getElementFromTemplate(html);
+const element = getElementFromTemplate(html);
 
 element.querySelector(`.main-replay`).addEventListener(`click`, (evt) => {
-  screenManager.showScreen(welcome);
+  showScreen(welcome);
 });
 
 export default element;

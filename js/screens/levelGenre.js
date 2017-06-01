@@ -1,5 +1,5 @@
-import * as utils from '../utils';
-import * as screenManager from '../screenManager';
+import {getElementFromTemplate} from '../utils';
+import {showScreen} from '../screenManager';
 import resultWin from './resultWin';
 import resultLose from './resultLose';
 
@@ -34,7 +34,7 @@ const html = `<section class="main main--level main--level-genre">
     </form>
   </section>`;
 
-const element = utils.getElementFromTemplate(html);
+const element = getElementFromTemplate(html);
 const answers = Array.from(element.querySelectorAll(`input[name="answer"]`));
 const sendBtn = element.querySelector(`.genre-answer-send`);
 
@@ -54,9 +54,9 @@ answers.forEach((el, index, array) => {
 
 sendBtn.addEventListener(`click`, (evt) => {
   if (Math.random() <= 0.5) {
-    screenManager.showScreen(resultWin);
+    showScreen(resultWin);
   } else {
-    screenManager.showScreen(resultLose);
+    showScreen(resultLose);
   }
 });
 
