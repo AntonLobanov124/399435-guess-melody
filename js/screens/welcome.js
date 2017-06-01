@@ -15,7 +15,7 @@ const html = `<section class="main main--welcome">
 
 const element = utils.getElementFromTemplate(html);
 
-element.querySelector(`.main-play`).addEventListener('click', (evt) => {
+element.querySelector(`.main-play`).addEventListener(`click`, (evt) => {
   screenManager.showScreen(levelArtist);
 });
 

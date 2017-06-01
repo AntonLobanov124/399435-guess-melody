@@ -40,10 +40,10 @@ const sendBtn = element.querySelector(`.genre-answer-send`);
 
 sendBtn.disabled = true;
 
-answers.forEach((element, index, array) => {
-  element.addEventListener('change', (evt) => {
-    for(let i = 0; i < answers.length; i++) {
-      if(answers[i].checked) {
+answers.forEach((el, index, array) => {
+  el.addEventListener(`change`, (evt) => {
+    for (let i = 0; i < answers.length; i++) {
+      if (answers[i].checked) {
         sendBtn.disabled = false;
         return;
       }
@@ -52,8 +52,8 @@ answers.forEach((element, index, array) => {
   });
 });
 
-sendBtn.addEventListener('click', (evt) => {
-  if(Math.random() <= 0.5) {
+sendBtn.addEventListener(`click`, (evt) => {
+  if (Math.random() <= 0.5) {
     screenManager.showScreen(resultWin);
   } else {
     screenManager.showScreen(resultLose);

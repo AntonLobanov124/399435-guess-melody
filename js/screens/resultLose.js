@@ -12,7 +12,7 @@ const html = `<section class="main main--result">
 
 const element = utils.getElementFromTemplate(html);
 
-element.querySelector(`.main-replay`).addEventListener('click', (evt) => {
+element.querySelector(`.main-replay`).addEventListener(`click`, (evt) => {
   screenManager.showScreen(welcome);
 });
 

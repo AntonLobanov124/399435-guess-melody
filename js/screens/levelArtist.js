@@ -51,8 +51,8 @@ const html = `<section class="main main--level main--level-artist">
 
 const element = utils.getElementFromTemplate(html);
 
-Array.from(element.querySelectorAll(`.main-answer`)).forEach((element, index, array) => {
-  element.addEventListener('click', (evt) => {
+Array.from(element.querySelectorAll(`.main-answer`)).forEach((el, index, array) => {
+  el.addEventListener(`click`, (evt) => {
     screenManager.showScreen(levelGenre);
   });
 });
