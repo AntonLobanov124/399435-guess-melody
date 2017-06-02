@@ -42,22 +42,12 @@ sendBtn.disabled = true;
 
 answers.forEach((el, index, array) => {
   el.addEventListener(`change`, (evt) => {
-    for (let i = 0; i < answers.length; i++) {
-      if (answers[i].checked) {
-        sendBtn.disabled = false;
-        return;
-      }
-    }
-    sendBtn.disabled = true;
+    sendBtn.disabled = !answers.find((answer) => answer.checked === true);
   });
 });
 
 sendBtn.addEventListener(`click`, (evt) => {
-  if (Math.random() <= 0.5) {
-    showScreen(resultWin);
-  } else {
-    showScreen(resultLose);
-  }
+  showScreen(Math.random() <= 0.5 ? resultWin : resultLose);
 });
 
 export default element;
