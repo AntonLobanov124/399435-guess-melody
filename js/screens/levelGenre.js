@@ -1,53 +1,68 @@
-import {getElementFromTemplate} from '../utils';
+import {getElementFromTemplate, arrayShuffle} from '../utils';
 import {showScreen} from '../screenManager';
-import resultWin from './resultWin';
-import resultLose from './resultLose';
+import dictionary from '../models/dictionary';
+import genres from '../models/genres';
+import tracks from '../models/tracks';
+import result from './result';
 
-const html = `<section class="main main--level main--level-genre">
-    <h2 class="title">Выберите инди-рок треки</h2>
-    <form class="genre">
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-1">
-        <label class="genre-answer-check" for="a-1"></label>
-      </div>
+const MAX_ANSWERS_SHOW = 4;
+const EMPTY_STRING = ``;
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-2">
-        <label class="genre-answer-check" for="a-2"></label>
-      </div>
+const isCheckGenre = (tracksArray, genre) => {
+  return !!tracksArray.find((element) => element[1].genre === genre);
+};
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-3">
-        <label class="genre-answer-check" for="a-3"></label>
-      </div>
+export default (state) => {
+  const tracksArray = Array.from(tracks);
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-4">
-        <label class="genre-answer-check" for="a-4"></label>
-      </div>
+  if (!isCheckGenre(tracksArray, genres.indieRock)) {
+    showScreen(result(state));
+  }
 
-      <button class="genre-answer-send" type="submit">Ответить</button>
-    </form>
-  </section>`;
+  const anwersShow = tracksArray.length >= MAX_ANSWERS_SHOW ? MAX_ANSWERS_SHOW : tracksArray.length;
+  let optionsId;
 
-const element = getElementFromTemplate(html);
-const answers = Array.from(element.querySelectorAll(`input[name="answer"]`));
-const sendBtn = element.querySelector(`.genre-answer-send`);
+  do {
+    optionsId = arrayShuffle(tracksArray).slice(0, anwersShow);
+  } while (!isCheckGenre(optionsId, genres.indieRock));
 
-sendBtn.disabled = true;
+  state.levelGenre.genre = genres.indieRock;
+  state.levelGenre.optionsId = optionsId.map((element) => element[0]);
 
-answers.forEach((el, index, array) => {
-  el.addEventListener(`change`, (evt) => {
-    sendBtn.disabled = !answers.find((answer) => answer.checked === true);
+  const answers = [];
+  for (const optionId of optionsId) {
+    answers.push(`<div class="genre-answer">
+                    <div class="player-wrapper"></div>
+                    <input type="checkbox" name="answer" value="answer-${optionId[0]}" id="${optionId[0]}">
+                    <label class="genre-answer-check" for="${optionId[0]}"></label>
+                  </div>`);
+  }
+
+  const html = `<section class="main main--level main--level-genre">
+      <h2 class="title">${dictionary.levelGenre.title}</h2>
+      <form class="genre">
+        ${answers.join(EMPTY_STRING)}
+
+        <button class="genre-answer-send" type="submit">${dictionary.buttons.answerSend}</button>
+      </form>
+    </section>`;
+
+  const element = getElementFromTemplate(html);
+  const answersNode = Array.from(element.querySelectorAll(`input[name="answer"]`));
+  const sendBtn = element.querySelector(`.genre-answer-send`);
+
+  sendBtn.disabled = true;
+
+  answersNode.forEach((el, index, array) => {
+    el.addEventListener(`change`, (evt) => {
+      sendBtn.disabled = !answersNode.find((answer) => answer.checked === true);
+    });
   });
-});
 
-sendBtn.addEventListener(`click`, (evt) => {
-  showScreen(Math.random() <= 0.5 ? resultWin : resultLose);
-});
+  sendBtn.addEventListener(`click`, (evt) => {
+    state.levelGenre.answersId = answersNode.filter((answer) => answer.checked === true).map((answer) => +answer.id);
+    showScreen(result(state));
+  });
 
-export default element;
+  return element;
+};
