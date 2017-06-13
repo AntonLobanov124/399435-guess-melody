@@ -6,7 +6,7 @@ import levelGenre from './levelGenre';
 
 const ANSWERS_SHOW = 3;
 const EMPTY_STRING = ``;
-const LEVEL_TIME = 3;
+const LEVEL_TIME = 10;
 const TIMER_TIMEOUT = 1000;
 
 let gameState;
