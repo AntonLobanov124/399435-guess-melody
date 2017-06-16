@@ -48,20 +48,18 @@ const createLevel = () => {
 
   const options = arrayShuffle(Array.from(tracks)).slice(0, MAX_ANSWERS_SHOW);
   const levelHistory = {answerId: null, optionId: null, optionsId: options.map(([index]) => index)};
-  const answers = [];
+  const answers = options.map(([index, track]) => {
+    return `<div class="main-answer-wrapper">
+              <input class="main-answer-r" type="radio" id="answer-${index}" name="answer" value="${index}" />
+              <label class="main-answer" for="answer-${index}">
+                <img class="main-answer-preview" src="${track.imgSrc}">
+                ${track.title}
+              </label>
+            </div>`;
+  });
 
   levelHistory.answerId = levelHistory.optionsId[getRandomInt(0, levelHistory.optionsId.length)];
   gameState.levelArtist.levelHistory.set(gameState.levelArtist.level, levelHistory);
-
-  options.map(([index, track]) => {
-    answers.push(`<div class="main-answer-wrapper">
-                    <input class="main-answer-r" type="radio" id="answer-${index}" name="answer" value="${index}" />
-                    <label class="main-answer" for="answer-${index}">
-                      <img class="main-answer-preview" src="${track.imgSrc}">
-                      ${track.title}
-                    </label>
-                  </div>`);
-  });
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
       <circle
@@ -94,7 +92,7 @@ const createLevel = () => {
 
   timerNode = element.querySelector(`.timer-value`);
 
-  Array.from(element.querySelectorAll(`.main-answer-r`)).forEach((el, index, array) => {
+  Array.from(element.querySelectorAll(`.main-answer-r`)).forEach((el) => {
     el.addEventListener(`click`, (evt) => {
       const optionId = +evt.target.value;
       const history = gameState.levelArtist.levelHistory.get(gameState.levelArtist.level);

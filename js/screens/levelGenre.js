@@ -27,13 +27,12 @@ export default (state) => {
   state.levelGenre.genre = DEFAULT_GENRE;
   state.levelGenre.optionsId = optionsId.map((element) => element[0]);
 
-  const answers = [];
-  optionsId.map(([index]) => {
-    answers.push(`<div class="genre-answer">
-                <div class="player-wrapper"></div>
-                <input type="checkbox" name="answer" value="answer-${index}" id="${index}">
-                <label class="genre-answer-check" for="${index}"></label>
-              </div>`);
+  const answers = optionsId.map(([index]) => {
+    return `<div class="genre-answer">
+              <div class="player-wrapper"></div>
+              <input type="checkbox" name="answer" value="answer-${index}" id="${index}">
+              <label class="genre-answer-check" for="${index}"></label>
+            </div>`;
   });
 
   const emptyString = ``;
