@@ -1,53 +1,67 @@
-import {getElementFromTemplate} from '../utils';
+import {getElementFromTemplate, arrayShuffle} from '../utils';
 import {showScreen} from '../screenManager';
-import resultWin from './resultWin';
-import resultLose from './resultLose';
+import genres from '../models/genres';
+import tracks from '../models/tracks';
+import result from './result';
 
-const html = `<section class="main main--level main--level-genre">
-    <h2 class="title">Выберите инди-рок треки</h2>
-    <form class="genre">
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-1">
-        <label class="genre-answer-check" for="a-1"></label>
-      </div>
+const MAX_ANSWERS_SHOW = 4;
+const DEFAULT_GENRE = genres.indieRock;
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-2">
-        <label class="genre-answer-check" for="a-2"></label>
-      </div>
+const isCheckGenre = (tracksArray, genre = DEFAULT_GENRE) => {
+  return !!tracksArray.find((element) => element[1].genre === genre);
+};
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-3">
-        <label class="genre-answer-check" for="a-3"></label>
-      </div>
+export default (state) => {
+  const tracksArray = Array.from(tracks);
 
-      <div class="genre-answer">
-        <div class="player-wrapper"></div>
-        <input type="checkbox" name="answer" value="answer-1" id="a-4">
-        <label class="genre-answer-check" for="a-4"></label>
-      </div>
+  if (tracksArray.length && !isCheckGenre(tracksArray)) {
+    return result(state);
+  }
 
-      <button class="genre-answer-send" type="submit">Ответить</button>
-    </form>
-  </section>`;
+  let optionsId;
 
-const element = getElementFromTemplate(html);
-const answers = Array.from(element.querySelectorAll(`input[name="answer"]`));
-const sendBtn = element.querySelector(`.genre-answer-send`);
+  do {
+    optionsId = arrayShuffle(tracksArray).slice(0, MAX_ANSWERS_SHOW);
+  } while (!isCheckGenre(optionsId));
 
-sendBtn.disabled = true;
+  state.levelGenre.genre = DEFAULT_GENRE;
+  state.levelGenre.optionsId = optionsId.map((element) => element[0]);
 
-answers.forEach((el, index, array) => {
-  el.addEventListener(`change`, (evt) => {
-    sendBtn.disabled = !answers.find((answer) => answer.checked === true);
+  const answers = [];
+  optionsId.map(([index]) => {
+    answers.push(`<div class="genre-answer">
+                <div class="player-wrapper"></div>
+                <input type="checkbox" name="answer" value="answer-${index}" id="${index}">
+                <label class="genre-answer-check" for="${index}"></label>
+              </div>`);
   });
-});
 
-sendBtn.addEventListener(`click`, (evt) => {
-  showScreen(Math.random() <= 0.5 ? resultWin : resultLose);
-});
+  const emptyString = ``;
+  const html = `<section class="main main--level main--level-genre">
+      <h2 class="title">Выберите инди-рок треки</h2>
+      <form class="genre">
+        ${answers.join(emptyString)}
 
-export default element;
+        <button class="genre-answer-send" type="submit">Ответить</button>
+      </form>
+    </section>`;
+
+  const element = getElementFromTemplate(html);
+  const answersNode = Array.from(element.querySelectorAll(`input[name="answer"]`));
+  const sendBtn = element.querySelector(`.genre-answer-send`);
+
+  sendBtn.disabled = true;
+
+  answersNode.forEach((el) => {
+    el.addEventListener(`change`, (evt) => {
+      sendBtn.disabled = !answersNode.find((answer) => answer.checked);
+    });
+  });
+
+  sendBtn.addEventListener(`click`, (evt) => {
+    state.levelGenre.answersId = answersNode.filter((answer) => answer.checked).map((answer) => +answer.id);
+    showScreen(result(state));
+  });
+
+  return element;
+};
