@@ -8,11 +8,15 @@ export function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-export function arrayShuffle(a) {
-  for (let i = a.length; i; i--) {
-    let j = Math.floor(Math.random() * i);
-    [a[i - 1], a[j]] = [a[j], a[i - 1]];
+export function arrayShuffle(array) {
+  for (let i = array.length; i; i--) {
+    let j = getRandomInt(0, i);
+    [array[i - 1], array[j]] = [array[j], array[i - 1]];
   }
 
-  return a;
+  return array;
+}
+
+export function padLeft(value = 0) {
+  return value > 9 ? value.toString() : `0${value}`;
 }

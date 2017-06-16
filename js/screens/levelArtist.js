@@ -1,48 +1,67 @@
-import {getElementFromTemplate, getRandomInt} from '../utils';
+import {getElementFromTemplate, getRandomInt, arrayShuffle, padLeft} from '../utils';
 import {showScreen} from '../screenManager';
-import dictionary from '../models/dictionary.js';
 import tracks from '../models/tracks.js';
 import levelGenre from './levelGenre';
 
-const ANSWERS_SHOW = 3;
-const EMPTY_STRING = ``;
+const MAX_ANSWERS_SHOW = 3;
 const LEVEL_TIME = 10;
 const TIMER_TIMEOUT = 1000;
 
 let gameState;
 
 let timerNode;
-let timerInterval;
+let timerIntervalId;
 
 const createTimerHtml = (time = 0) => {
   time = LEVEL_TIME - time;
   const minutes = Math.floor(time / 60);
   const seconds = time - minutes * 60;
 
-  const padLeft = (num = 0) => num > 9 ? num.toString() : `0${num}`;
-
-  return `<span class="timer-value-mins">${padLeft(minutes)}</span><!----><span class="timer-value-dots">:</span><!----><span class="timer-value-secs">${padLeft(seconds)}</span>`;
+  return `<span class="timer-value-mins">${padLeft(minutes)}</span>
+          <!----><span class="timer-value-dots">:</span>
+          <!----><span class="timer-value-secs">${padLeft(seconds)}</span>`;
 };
 
 const startTimer = () => {
-  if (!timerInterval) {
-    clearInterval(timerInterval);
+  if (!timerIntervalId) {
+    clearInterval(timerIntervalId);
   }
 
   const updateTimer = () => {
     gameState.levelArtist.time++;
     timerNode.innerHTML = createTimerHtml(gameState.levelArtist.time);
     if (gameState.levelArtist.time === LEVEL_TIME) {
-      clearInterval(timerInterval);
+      clearInterval(timerIntervalId);
       showScreen(levelGenre(gameState));
     }
   };
 
-  timerInterval = setInterval(updateTimer, TIMER_TIMEOUT);
+  timerIntervalId = setInterval(updateTimer, TIMER_TIMEOUT);
 };
 
 const createLevel = () => {
+  if (!tracks.size) {
+    return levelGenre(gameState);
+  }
+
   gameState.levelArtist.level++;
+
+  const options = arrayShuffle(Array.from(tracks)).slice(0, MAX_ANSWERS_SHOW);
+  const levelHistory = {answerId: null, optionId: null, optionsId: options.map(([index]) => index)};
+  const answers = [];
+
+  levelHistory.answerId = levelHistory.optionsId[getRandomInt(0, levelHistory.optionsId.length)];
+  gameState.levelArtist.levelHistory.set(gameState.levelArtist.level, levelHistory);
+
+  options.map(([index, track]) => {
+    answers.push(`<div class="main-answer-wrapper">
+                    <input class="main-answer-r" type="radio" id="answer-${index}" name="answer" value="${index}" />
+                    <label class="main-answer" for="answer-${index}">
+                      <img class="main-answer-preview" src="${track.imgSrc}">
+                      ${track.title}
+                    </label>
+                  </div>`);
+  });
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
       <circle
@@ -55,41 +74,18 @@ const createLevel = () => {
         </div>
     </svg>`;
 
-  const title = `<h2 class="title main-title">${dictionary.levelArtist.title}</h2>`;
+  const title = `<h2 class="title main-title">Кто исполняет эту песню?</h2>`;
 
-  const levelHistory = {answerId: null, optionId: null, optionsId: []};
-  const answers = [];
-
-  for (let i = 0, answersSize = tracks.size + 1, optionId = null; i < ANSWERS_SHOW; i++) {
-    do {
-      optionId = getRandomInt(1, answersSize);
-    } while (levelHistory.optionsId.indexOf(optionId) !== -1);
-
-    levelHistory.optionsId.push(optionId);
-
-    const option = tracks.get(optionId);
-
-    answers.push(`<div class="main-answer-wrapper">
-                    <input class="main-answer-r" type="radio" id="answer-${optionId}" name="answer" value="${optionId}" />
-                    <label class="main-answer" for="answer-${optionId}">
-                      <img class="main-answer-preview" src="${option.imgSrc}">
-                      ${option.title}
-                    </label>
-                  </div>`);
-  }
-
-  levelHistory.answerId = levelHistory.optionsId[getRandomInt(0, ANSWERS_SHOW)];
-  gameState.levelArtist.levelHistory.set(gameState.levelArtist.level, levelHistory);
-
+  const emptyString = ``;
   const html = `<section class="main main--level main--level-artist">
     ${svg}
     <div class="main-wrap">
-      <div class="main-timer"></div>;
+      <div class="main-timer"></div>
 
       ${title}
       <div class="player-wrapper"></div>
       <form class="main-list">
-      ${answers.join(EMPTY_STRING)}
+      ${answers.join(emptyString)}
       </form>
     </div>
   </section>`;
