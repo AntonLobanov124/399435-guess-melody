@@ -1,13 +1,24 @@
 import {getElementFromTemplate, getRandomInt, arrayShuffle, padLeft} from '../utils';
 import {showScreen} from '../screenManager';
+import {setLives, setAnswers, setTime} from '../models/gameState.js';
 import tracks from '../models/tracks.js';
-import levelGenre from './levelGenre';
+import result from './result';
 
 const MAX_ANSWERS_SHOW = 3;
-const LEVEL_TIME = 10;
+const MAX_ANSWERS = 10;
+const LEVEL_TIME = 120;
 const TIMER_TIMEOUT = 1000;
 
+const levelStateInit = () => {
+  return {
+    level: 0,
+    levelHistory: new Map()
+  };
+};
+
+
 let gameState;
+let levelState;
 
 let timerNode;
 let timerIntervalId;
@@ -23,28 +34,35 @@ const createTimerHtml = (time = 0) => {
 };
 
 const startTimer = () => {
-  if (!timerIntervalId) {
+  if (timerIntervalId) {
     clearInterval(timerIntervalId);
   }
 
   const updateTimer = () => {
-    gameState.levelArtist.time++;
-    timerNode.innerHTML = createTimerHtml(gameState.levelArtist.time);
-    if (gameState.levelArtist.time === LEVEL_TIME) {
-      clearInterval(timerIntervalId);
-      showScreen(levelGenre(gameState));
+    gameState = setTime(gameState, gameState.time + 1);
+    timerNode.innerHTML = createTimerHtml(gameState.time);
+    if (gameState.time === LEVEL_TIME) {
+      showResult();
     }
   };
 
   timerIntervalId = setInterval(updateTimer, TIMER_TIMEOUT);
 };
 
-const createLevel = () => {
-  if (!tracks.size) {
-    return levelGenre(gameState);
+const showResult = () => {
+  if (timerIntervalId) {
+    clearInterval(timerIntervalId);
   }
 
-  gameState.levelArtist.level++;
+  return result(gameState);
+};
+
+const createLevel = () => {
+  if (!tracks.size) {
+    return result(gameState);
+  }
+
+  levelState.level++;
 
   const options = arrayShuffle(Array.from(tracks)).slice(0, MAX_ANSWERS_SHOW);
   const levelHistory = {answerId: null, optionId: null, optionsId: options.map(([index]) => index)};
@@ -59,7 +77,7 @@ const createLevel = () => {
   });
 
   levelHistory.answerId = levelHistory.optionsId[getRandomInt(0, levelHistory.optionsId.length)];
-  gameState.levelArtist.levelHistory.set(gameState.levelArtist.level, levelHistory);
+  levelState.levelHistory.set(levelState.level, levelHistory);
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
       <circle
@@ -68,7 +86,7 @@ const createLevel = () => {
         style="filter: url(.#blur); transform: rotate(-90deg) scaleY(-1); transform-origin: center"></circle>
 
         <div class="timer-value" xmlns="http://www.w3.org/1999/xhtml">
-          ${createTimerHtml(gameState.levelArtist.time)}
+          ${createTimerHtml(gameState.time)}
         </div>
     </svg>`;
 
@@ -95,13 +113,15 @@ const createLevel = () => {
   Array.from(element.querySelectorAll(`.main-answer-r`)).forEach((el) => {
     el.addEventListener(`click`, (evt) => {
       const optionId = +evt.target.value;
-      const history = gameState.levelArtist.levelHistory.get(gameState.levelArtist.level);
+      const history = levelState.levelHistory.get(levelState.level);
       history.optionId = optionId;
       if (history.answerId === optionId) {
-        gameState.score++;
+        gameState = setAnswers(gameState, gameState.answers + 1);
+      } else {
+        gameState = setLives(gameState, gameState.lives - 1);
       }
 
-      showScreen(createLevel());
+      showScreen(gameState.lives && levelState.level !== MAX_ANSWERS ? createLevel() : showResult());
     });
   });
 
@@ -110,6 +130,11 @@ const createLevel = () => {
 
 export default (state) => {
   gameState = state;
+  levelState = levelStateInit();
+
+  const element = createLevel();
+
   startTimer();
-  return createLevel();
+
+  return element;
 };

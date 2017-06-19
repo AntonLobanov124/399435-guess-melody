@@ -1,7 +1,7 @@
 import {getElementFromTemplate} from '../utils';
 import {showScreen} from '../screenManager';
 import {header} from '../models/dictionary';
-import gameInitState from '../models/gameInitState';
+import {gameInitState} from '../models/gameState';
 import levelArtist from './levelArtist';
 
 export default () => {
@@ -15,7 +15,7 @@ export default () => {
   const element = getElementFromTemplate(html);
 
   element.querySelector(`.main-play`).addEventListener(`click`, (evt) => {
-    showScreen(levelArtist(gameInitState()));
+    showScreen(levelArtist(Object.assign({}, gameInitState)));
   });
   return element;
 };

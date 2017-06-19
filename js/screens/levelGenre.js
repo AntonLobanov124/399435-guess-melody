@@ -7,6 +7,14 @@ import result from './result';
 const MAX_ANSWERS_SHOW = 4;
 const DEFAULT_GENRE = genres.indieRock;
 
+const levelStateInit = Object.freeze({
+  genre: genres.indieRock,
+  optionsId: [],
+  answersId: []
+});
+
+let levelState;
+
 const isCheckGenre = (tracksArray, genre = DEFAULT_GENRE) => {
   return !!tracksArray.find((element) => element[1].genre === genre);
 };
@@ -18,14 +26,15 @@ export default (state) => {
     return result(state);
   }
 
+  levelState = Object.freeze(levelStateInit);
   let optionsId;
 
   do {
     optionsId = arrayShuffle(tracksArray).slice(0, MAX_ANSWERS_SHOW);
   } while (!isCheckGenre(optionsId));
 
-  state.levelGenre.genre = DEFAULT_GENRE;
-  state.levelGenre.optionsId = optionsId.map((element) => element[0]);
+  levelState.genre = DEFAULT_GENRE;
+  levelState.optionsId = optionsId.map((element) => element[0]);
 
   const answers = optionsId.map(([index]) => {
     return `<div class="genre-answer">
@@ -58,7 +67,7 @@ export default (state) => {
   });
 
   sendBtn.addEventListener(`click`, (evt) => {
-    state.levelGenre.answersId = answersNode.filter((answer) => answer.checked).map((answer) => +answer.id);
+    levelState.answersId = answersNode.filter((answer) => answer.checked).map((answer) => +answer.id);
     showScreen(result(state));
   });
 

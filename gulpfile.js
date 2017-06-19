@@ -51,6 +51,7 @@ gulp.task('test', function () {
   return gulp
     .src(['js/**/*.test.js'], { read: false })
     .pipe(mocha({
+      ui: 'tdd',
       compilers: ['js:babel-register'],
       reporter: 'spec'
     }));
