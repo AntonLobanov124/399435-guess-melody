@@ -9,12 +9,13 @@ export function getRandomInt(min, max) {
 }
 
 export function arrayShuffle(array) {
-  for (let i = array.length; i; i--) {
+  const ar = array.slice(0);
+  for (let i = ar.length; i; i--) {
     let j = getRandomInt(0, i);
-    [array[i - 1], array[j]] = [array[j], array[i - 1]];
+    [ar[i - 1], ar[j]] = [ar[j], ar[i - 1]];
   }
 
-  return array;
+  return ar;
 }
 
 export function padLeft(value = 0) {
