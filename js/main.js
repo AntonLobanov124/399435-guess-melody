@@ -1,3 +1,3 @@
-﻿import welcome from './screens/welcome';
+﻿import Application from './application';
 
-welcome().view();
+Application.showWelcome();
