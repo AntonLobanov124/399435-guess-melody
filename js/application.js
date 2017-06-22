@@ -28,10 +28,14 @@ class Application {
     const url = route.replace(`#`, ``).split(`=`);
     route = url[0];
 
-    switch(route) {
+    switch (route) {
       case Presenter.RESULT:
-        const param = url[1];
-        this._routes[route].init({time: +param.substring(0, 2), answers: +param.substring(2, 4), lives: +param.substring(4, 6)});
+        const params = url[1];
+        this._routes[route].init({
+          time: +params.substring(0, 2),
+          answers: +params.substring(2, 4),
+          lives: +params.substring(4, 6)
+        });
         break;
       default:
         this._routes[route].init();
