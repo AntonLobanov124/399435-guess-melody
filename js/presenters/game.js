@@ -45,7 +45,7 @@ class Game {
 
   _exit() {
     this._stopTimer();
-    Application.showStats(Object.assign({}, this._state));
+    Application.showResult(Object.assign({}, this._state));
   }
 
   _startTimer() {

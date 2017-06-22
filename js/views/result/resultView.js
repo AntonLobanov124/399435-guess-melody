@@ -1,7 +1,7 @@
 import {header} from '../../models/dictionary.js';
 import AbstractView from '../abstractView';
 
-export default class StatsView extends AbstractView {
+export default class ResultView extends AbstractView {
   constructor(answers = 0, percent = 0) {
     super();
 

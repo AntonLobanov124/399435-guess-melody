@@ -1,17 +1,17 @@
-import welcomeScreen from './presenters/welcome';
-import gameScreen from './presenters/game';
-import statsScreen from './presenters/stats';
+import WelcomeScreen from './presenters/welcome';
+import GameScreen from './presenters/game';
+import ResultScreen from './presenters/result';
 
 export default class Application {
   static showWelcome() {
-    welcomeScreen.init();
+    WelcomeScreen.init();
   }
 
   static showGame() {
-    gameScreen.init();
+    GameScreen.init();
   }
 
-  static showStats(stats) {
-    statsScreen.init(stats);
+  static showResult(stats) {
+    ResultScreen.init(stats);
   }
 }
