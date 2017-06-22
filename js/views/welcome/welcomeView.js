@@ -13,6 +13,7 @@ export default class WelcomeView extends AbstractView {
 
   bind() {
     this.element.querySelector(`.main-play`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
       this.onStart();
     });
   }
