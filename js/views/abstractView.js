@@ -22,7 +22,7 @@ export default class AbstractView {
 
   }
 
-  view() {
+  show() {
     changeView(this);
   }
 }
