@@ -14,16 +14,16 @@ const GAME_TIME = 120;
 const TIMER_TIMEOUT = 1000;
 
 const Level = {
-  None: 0,
-  Artist: 1,
-  Genre: 2
+  NONE: 0,
+  ARTIST: 1,
+  GENRE: 2
 };
 
 class Game {
   init() {
     this._state = Object.assign({}, gameInitState);
     this._questionNumber = 0;
-    this._currentLevel = Level.None;
+    this._currentLevel = Level.NONE;
     this._timerId = null;
     this._view = null;
 
@@ -131,22 +131,20 @@ class Game {
       return;
     }
 
-    this._currentLevel = Math.random() < 0.5 ? Level.Artist : Level.Genre;
+    this._currentLevel = Math.random() < 0.5 ? Level.ARTIST : Level.GENRE;
 
     switch (this._currentLevel) {
-      case Level.Artist:
+      case Level.ARTIST:
         this._view = this._getLevelArtistView();
         break;
-      case Level.Genre:
+      case Level.GENRE:
         this._view = this._getLevelGenreView();
         break;
     }
 
     this._view.time = this._timeLeft;
     this._view.show();
-
   }
-
 }
 
 export default new Game();
