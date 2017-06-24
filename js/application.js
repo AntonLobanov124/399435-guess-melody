@@ -12,7 +12,7 @@ const Presenter = {
 };
 
 class Application {
-  constructor() {
+  init() {
     this._showPreloader();
 
     this._model = new class extends BaseModel {
