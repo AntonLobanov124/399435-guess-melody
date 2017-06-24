@@ -3,7 +3,7 @@ import statistics from '../models/statistics.js';
 import {gameInitState} from '../models/gameState';
 import ResultView from '../views/result/resultView.js';
 
-class Result {
+export default class Result {
   _getPercentAnswers(time, answers) {
     const statistic = {time, answers};
 
@@ -16,7 +16,7 @@ class Result {
   }
 
   init(state = Object.assign({}, gameInitState)) {
-    const view = new ResultView(state.answers, state.answers ? this._getPercentAnswers(state.time, state.answers) : 0);
+    const view = new ResultView(state.score, state.score ? this._getPercentAnswers(state.time, state.answers) : 0);
 
     view.onReplay = () => {
       Application.showGame();
@@ -25,5 +25,3 @@ class Result {
     view.show();
   }
 }
-
-export default new Result();

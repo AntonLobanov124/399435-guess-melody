@@ -1,29 +1,23 @@
-import {getRandomInt, arrayShuffle} from '../utils';
-import {gameInitState, setLives, setAnswers, setTime} from '../models/gameState';
-import genres from '../models/genres';
-import tracks from '../models/tracks';
+import {gameInitState, setLives, setAnswers, setScore, setTime} from '../models/gameState';
+import QuestionType from '../enums/questionType.js';
 import Application from '../application';
 import LevelArtistView from '../views/game/levelArtistView';
 import LevelGenreView from '../views/game/levelGenreView';
 
-const MAX_ANSWERS_SHOW_ON_LEVEL_ARTIST = 3;
-const MAX_ANSWERS_SHOW_ON_LEVEL_GENRE = 4;
-const DEFAULT_GENRE = genres.indieRock;
 const MAX_QUESTIONS = 10;
+const QUICK_QUESTION_TIMEOUT = 10;
 const GAME_TIME = 120;
 const TIMER_TIMEOUT = 1000;
 
-const Level = {
-  NONE: 0,
-  ARTIST: 1,
-  GENRE: 2
-};
+export default class Game {
+  constructor(data) {
+    this._question = data;
+  }
 
-class Game {
   init() {
     this._state = Object.assign({}, gameInitState);
     this._questionNumber = 0;
-    this._currentLevel = Level.NONE;
+    this._questionStartTime = 0;
     this._timerId = null;
     this._view = null;
 
@@ -59,6 +53,7 @@ class Game {
       }
 
       if (this._state.time > GAME_TIME) {
+        this._state = setScore(this._state, 0);
         this._exit();
       }
     };
@@ -66,30 +61,14 @@ class Game {
     this._timerId = setInterval(tick, TIMER_TIMEOUT);
   }
 
-  _getQuestionForLevelArtist() {
-    const options = arrayShuffle(Array.from(tracks)).slice(0, MAX_ANSWERS_SHOW_ON_LEVEL_ARTIST);
-    const answerId = options[getRandomInt(0, options.length)][0];
-
-    return {answerId, options};
-  }
-
-  _getQuestionForLevelGenre() {
-    const isCheckGenre = (tracksArray, genre = DEFAULT_GENRE) => {
-      return !!tracksArray.find((element) => element[1].genre === genre);
-    };
-
-    const tracksArray = arrayShuffle(Array.from(tracks));
-    let optionsId;
-
-    do {
-      optionsId = arrayShuffle(tracksArray).slice(0, MAX_ANSWERS_SHOW_ON_LEVEL_GENRE);
-    } while (!isCheckGenre(optionsId));
-
-    return optionsId.map(([index]) => index);
+  _getQuestion() {
+    return this._question[this._questionNumber - 1];
   }
 
   _checkAnswer(isAnswer) {
     if (isAnswer) {
+      const winScore = this._state.time - this._questionStartTime > QUICK_QUESTION_TIMEOUT ? 1 : 2;
+      this._state = setScore(this._state, this._state.score + winScore);
       this._state = setAnswers(this._state, this._state.answers + 1);
     } else {
       this._state = setLives(this._state, this._state.lives - 1);
@@ -102,22 +81,21 @@ class Game {
     }
   }
 
-  _getLevelArtistView() {
-    const question = this._getQuestionForLevelArtist();
-    const view = new LevelArtistView(question.options);
+  _getLevelArtistView(question) {
+    const view = new LevelArtistView(question);
 
     view.onAnswer = (answerId) => {
-      this._checkAnswer(question.answerId === answerId);
+      this._checkAnswer(question.answers[answerId].isCorrect);
     };
 
     return view;
   }
 
-  _getLevelGenreView() {
-    const view = new LevelGenreView(this._getQuestionForLevelGenre());
+  _getLevelGenreView(question) {
+    const view = new LevelGenreView(question);
 
     view.onAnswer = (answersId) => {
-      this._checkAnswer(!answersId.find((el) => tracks.get(el).genre !== DEFAULT_GENRE));
+      this._checkAnswer(!answersId.find((el) => question.answers[el].genre !== question.genre));
     };
 
     return view;
@@ -125,20 +103,21 @@ class Game {
 
   _showQuestion() {
     this._questionNumber++;
+    this._questionStartTime = this._state.time;
+
+    const question = this._getQuestion();
 
     if (this._questionNumber === MAX_QUESTIONS) {
       this._exit();
       return;
     }
 
-    this._currentLevel = Math.random() < 0.5 ? Level.ARTIST : Level.GENRE;
-
-    switch (this._currentLevel) {
-      case Level.ARTIST:
-        this._view = this._getLevelArtistView();
+    switch (question.type) {
+      case QuestionType.ARTIST:
+        this._view = this._getLevelArtistView(question);
         break;
-      case Level.GENRE:
-        this._view = this._getLevelGenreView();
+      case QuestionType.GENRE:
+        this._view = this._getLevelGenreView(question);
         break;
     }
 
@@ -146,5 +125,3 @@ class Game {
     this._view.show();
   }
 }
-
-export default new Game();

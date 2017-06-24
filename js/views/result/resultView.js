@@ -2,14 +2,14 @@ import {header} from '../../models/dictionary.js';
 import AbstractView from '../abstractView';
 
 export default class ResultView extends AbstractView {
-  constructor(answers = 0, percent = 0) {
+  constructor(score = 0, percent = 0) {
     super();
 
-    this._content = answers ? `<h2 class="title">Вы настоящий меломан!</h2>
-                               <div class="main-stat">За&nbsp;2&nbsp;минуты<br>вы&nbsp;отгадали ${answers}&nbsp;мелодии</div>
-                               <span class="main-comparison">Это&nbsp;лучше чем у&nbsp;${percent.toFixed()}%&nbsp;игроков</span>`
-                            : `<h2 class="title">Вы проиграли</h2>
-                               <div class="main-stat">Ничего, вам повезет в следующий раз</div>`;
+    this._content = score ? `<h2 class="title">Вы настоящий меломан!</h2>
+                             <div class="main-stat">За&nbsp;2&nbsp;минуты<br>вы&nbsp;отгадали ${score}&nbsp;мелодии</div>
+                             <span class="main-comparison">Это&nbsp;лучше чем у&nbsp;${percent.toFixed()}%&nbsp;игроков</span>`
+                          : `<h2 class="title">Вы проиграли</h2>
+                             <div class="main-stat">Ничего, вам повезет в следующий раз</div>`;
   }
 
   get template() {

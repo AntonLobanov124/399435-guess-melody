@@ -1,5 +1,5 @@
 import assert from 'assert';
-import {gameInitState, setLives, setAnswers, setTime} from './gameState.js';
+import {gameInitState, setLives, setScore, setAnswers, setTime} from './gameState.js';
 
 suite(`Set lives`, () => {
   test(`Copy on write principle`, () => {
@@ -22,6 +22,30 @@ suite(`Set lives`, () => {
 
     gameState = setLives(gameState, -1);
     assert(gameState.lives >= 0);
+  });
+});
+
+suite(`Set score`, () => {
+  test(`Copy on write principle`, () => {
+    const gameState = Object.assign({}, gameInitState);
+    assert(gameState !== setScore(gameState, 0));
+  });
+
+  test(`The value is greater than or equal to zero`, () => {
+    let gameState = Object.assign({answers: 10}, gameInitState);
+
+    gameState = setScore(gameState, 2);
+    assert(gameState.score === 2);
+
+    gameState = setScore(gameState, 0);
+    assert(gameState.score === 0);
+  });
+
+  test(`Only positive values`, () => {
+    let gameState = Object.assign({}, gameInitState);
+
+    gameState = setScore(gameState, -1);
+    assert(gameState.score >= 0);
   });
 });
 
