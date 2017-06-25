@@ -1,27 +1,50 @@
 import Application from '../application';
-import statistics from '../models/statistics.js';
+import StatisticModel from '../models/statisticModel.js';
 import {gameInitState} from '../models/gameState';
 import ResultView from '../views/result/resultView.js';
 
 export default class Result {
-  _getPercentAnswers(time, answers) {
-    const statistic = {time, answers};
-
-    statistics.push(statistic);
-    statistics.sort((a, b) => {
-      return b.answers - a.answers || a.time - b.time;
-    });
-
-    return (statistics.length - statistics.indexOf(statistic) - 1) / statistics.length * 100;
+  init(state = Object.assign({}, gameInitState)) {
+    if (state.score > 0) {
+      Application.showPreloader();
+      StatisticModel.send({time: state.time, answers: state.answers})
+        .then(() => {
+          StatisticModel.load()
+            .then((data) => {
+              this._getResultView(state.score, this._getPercentAnswers(data)).show();
+            });
+        });
+    } else {
+      this._getResultView().show();
+    }
   }
 
-  init(state = Object.assign({}, gameInitState)) {
-    const view = new ResultView(state.score, state.score ? this._getPercentAnswers(state.time, state.answers) : 0);
+  _getResultView(score = 0, percent = 0) {
+    const view = new ResultView(score, percent);
 
     view.onReplay = () => {
       Application.showGame();
     };
 
-    view.show();
+    return view;
+  }
+
+  _getPercentAnswers(statistics) {
+    if (!statistics || !Array.isArray(statistics)) {
+      throw new Error(`Invalid parameter.`);
+    }
+
+    if (!statistics.length) {
+      return 100;
+    }
+
+    const statisticsClone = statistics.slice(0);
+    const statistic = statisticsClone[0];
+
+    statisticsClone.sort((a, b) => {
+      return b.answers - a.answers || a.time - b.time;
+    });
+
+    return (statisticsClone.length - statisticsClone.indexOf(statistic) - 1) / statisticsClone.length * 100;
   }
 }
