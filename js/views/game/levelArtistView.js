@@ -2,23 +2,25 @@ import {padLeft} from '../../utils.js';
 import AbstractView from '../abstractView.js';
 
 export default class LevelArtistView extends AbstractView {
-  constructor(answers) {
+  constructor(question) {
     super();
-    this._answers = answers.map(([index, track]) => {
-      return `<div class="main-answer-wrapper">
-                <input class="main-answer-r" type="radio" id="answer-${index}" name="answer" value="${index}" />
-                <label class="main-answer" for="answer-${index}">
-                  <img class="main-answer-preview" src="${track.imgSrc}">
-                  ${track.title}
-                </label>
-              </div>`;
-    });
 
+    this._question = question;
     this._timerNode = this.element.querySelector(`.timer-value`);
   }
 
   get template() {
     const emptyString = ``;
+    const answers = this._question.answers.map((answer, index) => {
+      return `<div class="main-answer-wrapper">
+                <input class="main-answer-r" type="radio" id="answer-${index}" name="answer" value="${index}" />
+                <label class="main-answer" for="answer-${index}">
+                  <img class="main-answer-preview" src="${answer.image.url}">
+                  ${answer.title}
+                </label>
+              </div>`;
+    });
+
     return `<section class="main main--level main--level-artist">
               <svg xmlns="http://www.w3.org/2000/svg" class="timer" viewBox="0 0 780 780">
                 <circle
@@ -31,10 +33,11 @@ export default class LevelArtistView extends AbstractView {
               <div class="main-wrap">
                 <div class="main-timer"></div>
 
-                <h2 class="title main-title">Кто исполняет эту песню?</h2>
-                <div class="player-wrapper"></div>
+                <h2 class="title main-title">${this._question.question}</h2>
+                <div class="player-wrapper">
+                </div>
                 <form class="main-list">
-                  ${this._answers.join(emptyString)}
+                  ${answers.join(emptyString)}
                 </form>
               </div>
             </section>`;
@@ -55,6 +58,8 @@ export default class LevelArtistView extends AbstractView {
         this.onAnswer(+evt.target.value);
       });
     });
+
+    window.initializePlayer(this.element.querySelector(`.player-wrapper`), this._question.src, true);
   }
 
   onAnswer(answerId) {}

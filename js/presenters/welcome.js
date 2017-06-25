@@ -1,8 +1,7 @@
 import Application from '../application';
 import WelcomeView from '../views/welcome/welcomeView';
 
-
-class Welcome {
+export default class Welcome {
   init() {
     const view = new WelcomeView();
 
@@ -13,5 +12,3 @@ class Welcome {
     view.show();
   }
 }
-
-export default new Welcome();

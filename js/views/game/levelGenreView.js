@@ -1,31 +1,33 @@
 import AbstractView from '../abstractView.js';
 
 export default class LevelGenreView extends AbstractView {
-  constructor(answers) {
+  constructor(question) {
     super();
 
-    this._answers = answers.map((answerId) => {
-      return `<div class="genre-answer">
-                <div class="player-wrapper"></div>
-                <input type="checkbox" name="answer" value="answer-${answerId}" id="${answerId}">
-                <label class="genre-answer-check" for="${answerId}"></label>
-              </div>`;
-    });
+    this._question = question;
   }
 
   get template() {
     const emptyString = ``;
+    const answers = this._question.answers.map((answer, index) => {
+      return `<div class="genre-answer">
+                <div class="player-wrapper"></div>
+                <input type="checkbox" name="answer" value="answer-${index}" id="${index}">
+                <label class="genre-answer-check" for="${index}"></label>
+              </div>`;
+    });
+
     return `<section class="main main--level main--level-genre">
-              <h2 class="title">Выберите инди-рок треки</h2>
+              <h2 class="title">${this._question.question}</h2>
               <form class="genre">
-                ${this._answers.join(emptyString)}
+                ${answers.join(emptyString)}
                 <button class="genre-answer-send" type="submit">Ответить</button>
               </form>
             </section>`;
   }
 
   // Заглушка
-  set time(value) {}
+  set time(value) { }
 
   bind() {
     const answersNode = Array.from(this.element.querySelectorAll(`input[name="answer"]`));
@@ -34,13 +36,18 @@ export default class LevelGenreView extends AbstractView {
     sendBtn.disabled = true;
 
     sendBtn.addEventListener(`click`, (evt) => {
+      evt.preventDefault();
       this.onAnswer(answersNode.filter((answer) => answer.checked).map((answer) => +answer.id));
     });
 
-    answersNode.forEach((el) => {
+    answersNode.forEach((el, index) => {
       el.addEventListener(`change`, (evt) => {
         sendBtn.disabled = !answersNode.find((answer) => answer.checked);
       });
+    });
+
+    Array.from(this.element.querySelectorAll(`.player-wrapper`)).forEach((el, index) => {
+      window.initializePlayer(el, this._question.answers[index].src);
     });
   }
 

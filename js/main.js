@@ -1,3 +1,5 @@
-﻿import Application from './application';
+﻿import './animate';
+import './player';
+import Application from './application';
 
-Application.showWelcome();
+Application.init();
