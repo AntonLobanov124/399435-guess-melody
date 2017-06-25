@@ -4,6 +4,6 @@ export default class BaseAdapter {
   }
 
   toServer(data) {
-    return data;
+    return JSON.stringify(data);
   }
 }

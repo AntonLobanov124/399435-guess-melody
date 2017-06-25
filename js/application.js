@@ -3,7 +3,7 @@ import PreloaderPresenter from './presenters/preloader';
 import WelcomePresenter from './presenters/welcome';
 import GamePresenter from './presenters/game';
 import ResultPresenter from './presenters/result';
-import BaseModel from './models/baseModel.js';
+import QuestionModel from './models/questionModel.js';
 
 const Presenter = {
   WELCOME: ``,
@@ -13,15 +13,9 @@ const Presenter = {
 
 class Application {
   init() {
-    this._showPreloader();
+    this.showPreloader();
 
-    this._model = new class extends BaseModel {
-      get urlRead() {
-        return `https://intensive-ecmascript-server-btfgudlkpi.now.sh/guess-melody/questions`;
-      }
-    }();
-
-    this._model.load()
+    QuestionModel.load()
       .then((data) => this._setup(data))
       .then(() => this._changePresenter(location.hash));
   }
@@ -59,7 +53,7 @@ class Application {
     }
   }
 
-  _showPreloader() {
+  showPreloader() {
     new PreloaderPresenter().init();
   }
 

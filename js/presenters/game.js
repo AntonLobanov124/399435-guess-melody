@@ -11,7 +11,7 @@ const TIMER_TIMEOUT = 1000;
 
 export default class Game {
   constructor(data) {
-    this._question = data;
+    this._questions = data;
   }
 
   init() {
@@ -62,7 +62,7 @@ export default class Game {
   }
 
   _getQuestion() {
-    return this._question[this._questionNumber - 1];
+    return this._questions[this._questionNumber - 1];
   }
 
   _checkAnswer(isAnswer) {
