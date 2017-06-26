@@ -1,8 +1,9 @@
-import {padLeft} from './utils.js';
+import {padLeft, preloadAudio} from './utils.js';
 import PreloaderPresenter from './presenters/preloader';
 import WelcomePresenter from './presenters/welcome';
 import GamePresenter from './presenters/game';
 import ResultPresenter from './presenters/result';
+import QuestionType from './enums/questionType';
 import QuestionModel from './models/questionModel.js';
 
 const Presenter = {
@@ -16,8 +17,13 @@ class Application {
     this.showPreloader();
 
     QuestionModel.load()
-      .then((data) => this._setup(data))
-      .then(() => this._changePresenter(location.hash));
+      .then((data) => {
+        const urls = [...data.filter((el) => el.type === QuestionType.ARTIST).map((el) => el.src),
+                      ...data.filter((el) => el.type === QuestionType.GENRE).map((el) => el.answers.map((answer) => answer.src)).reduce((a, b) => a.concat(b))];
+        preloadAudio(urls)
+          .then(() => this._setup(data))
+          .then(() => this._changePresenter(location.hash))
+      });
   }
 
   _setup(data) {
