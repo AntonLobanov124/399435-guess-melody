@@ -29,8 +29,8 @@ export default class Result {
     return view;
   }
 
-  _getPercentAnswers(statistics) {
-    if (!statistics || !Array.isArray(statistics)) {
+  _getPercentAnswers(statistics = []) {
+    if (!Array.isArray(statistics)) {
       throw new Error(`Invalid parameter.`);
     }
 
