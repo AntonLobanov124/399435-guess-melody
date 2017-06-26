@@ -19,10 +19,10 @@ class Application {
     QuestionModel.load()
       .then((data) => {
         const urls = [...data.filter((el) => el.type === QuestionType.ARTIST).map((el) => el.src),
-                      ...data.filter((el) => el.type === QuestionType.GENRE).map((el) => el.answers.map((answer) => answer.src)).reduce((a, b) => a.concat(b))];
+          ...data.filter((el) => el.type === QuestionType.GENRE).map((el) => el.answers.map((answer) => answer.src)).reduce((a, b) => a.concat(b))];
         preloadAudio(urls)
           .then(() => this._setup(data))
-          .then(() => this._changePresenter(location.hash))
+          .then(() => this._changePresenter(location.hash));
       });
   }
 

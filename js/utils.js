@@ -27,7 +27,7 @@ export function preloadAudio(urls = []) {
     throw new Error(`Invalid parameter.`);
   }
 
-  urls = urls.filter((value, index, self) => value != `` && self.indexOf(value) === index);
+  urls = urls.filter((value, index, self) => value !== `` && self.indexOf(value) === index);
 
   let loaded = 0;
   return new Promise((resolve, reject) => {
