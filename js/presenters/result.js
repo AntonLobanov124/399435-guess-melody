@@ -39,7 +39,7 @@ export default class Result {
     }
 
     const statisticsClone = statistics.slice(0);
-    const statistic = statisticsClone[0];
+    const statistic = statisticsClone[statisticsClone.length - 1];
 
     statisticsClone.sort((a, b) => {
       return b.answers - a.answers || a.time - b.time;
