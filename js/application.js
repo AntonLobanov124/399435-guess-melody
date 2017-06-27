@@ -18,8 +18,19 @@ class Application {
 
     QuestionModel.load()
       .then((data) => {
-        const urls = [...data.filter((el) => el.type === QuestionType.ARTIST).map((el) => el.src),
-          ...data.filter((el) => el.type === QuestionType.GENRE).map((el) => el.answers.map((answer) => answer.src)).reduce((a, b) => a.concat(b))];
+        const urls = data.reduce((result, current) => {
+          switch (current.type) {
+            case QuestionType.ARTIST:
+              result.push(current.src);
+              break;
+            case QuestionType.GENRE:
+              result = result.concat(current.answers.map((answer) => answer.src));
+              break;
+          }
+
+          return result;
+        }, []);
+
         preloadAudio(urls)
           .then(() => this._setup(data))
           .then(() => this._changePresenter(location.hash));

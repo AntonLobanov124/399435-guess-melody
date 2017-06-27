@@ -15,28 +15,9 @@ export function preloadAudio(urls = []) {
 
   urls = urls.filter((value, index, self) => value !== `` && self.indexOf(value) === index);
 
-  let loaded = 0;
-  return new Promise((resolve, reject) => {
-    const loadNextAudio = () => {
-      loadAudio(urls[loaded]);
-    };
-
-    const loadedAudio = () => {
-      loaded++;
-      if (loaded === urls.length) {
-        resolve(loaded);
-      } else {
-        loadNextAudio();
-      }
-    };
-
-    const loadAudio = (url) => {
-      const audio = new Audio();
-
-      audio.addEventListener(`canplaythrough`, loadedAudio, false);
-      audio.src = url;
-    };
-
-    loadNextAudio();
-  });
+  return Promise.all(urls.map((url) => new Promise((resolve) => {
+    const audio = new Audio();
+    audio.addEventListener(`canplaythrough`, resolve, false);
+    audio.src = url;
+  })));
 }
