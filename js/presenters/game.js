@@ -14,6 +14,10 @@ export default class Game {
     this._questions = data;
   }
 
+  get _timeLeft() {
+    return GAME_TIME - this._state.time;
+  }
+
   init() {
     this._state = Object.assign({}, gameInitState);
     this._questionNumber = 0;
@@ -23,10 +27,6 @@ export default class Game {
 
     this._showQuestion();
     this._startTimer();
-  }
-
-  get _timeLeft() {
-    return GAME_TIME - this._state.time;
   }
 
   _stopTimer() {

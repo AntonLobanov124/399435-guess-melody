@@ -37,6 +37,22 @@ class Application {
       });
   }
 
+  showPreloader() {
+    new PreloaderPresenter().init();
+  }
+
+  showWelcome() {
+    location.hash = Presenter.WELCOME;
+  }
+
+  showGame() {
+    location.hash = Presenter.GAME;
+  }
+
+  showResult(stats) {
+    location.hash = `${Presenter.RESULT}=${padLeft(stats.score)}${padLeft(stats.answers)}${padLeft(stats.lives)}${padLeft(stats.time)}`;
+  }
+
   _setup(data) {
     this._routes = {
       [Presenter.WELCOME]: new WelcomePresenter(),
@@ -68,22 +84,6 @@ class Application {
         this._routes[route].init();
         break;
     }
-  }
-
-  showPreloader() {
-    new PreloaderPresenter().init();
-  }
-
-  showWelcome() {
-    location.hash = Presenter.WELCOME;
-  }
-
-  showGame() {
-    location.hash = Presenter.GAME;
-  }
-
-  showResult(stats) {
-    location.hash = `${Presenter.RESULT}=${padLeft(stats.score)}${padLeft(stats.answers)}${padLeft(stats.lives)}${padLeft(stats.time)}`;
   }
 }
 
