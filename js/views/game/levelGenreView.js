@@ -26,7 +26,6 @@ export default class LevelGenreView extends AbstractView {
             </section>`;
   }
 
-  // Заглушка
   set time(value) { }
 
   bind() {
@@ -49,6 +48,24 @@ export default class LevelGenreView extends AbstractView {
     Array.from(this.element.querySelectorAll(`.player-wrapper`)).forEach((el, index) => {
       window.initializePlayer(el, this._question.answers[index].src);
     });
+
+    const players = Array.from(this.element.querySelectorAll(`audio`));
+    const stopAllPlayersExceptOne = (playerIndex) => {
+      players.forEach((player, index) => {
+        if (index !== playerIndex) {
+          player.pause();
+          player.currentTime = 0;
+        }
+      });
+    };
+
+    Array.from(this.element.querySelectorAll(`.player-control`)).forEach((el, index) => {
+      el.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        stopAllPlayersExceptOne(index);
+      });
+    });
+
   }
 
   onAnswer(answersId) {}
