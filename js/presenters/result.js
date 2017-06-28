@@ -45,6 +45,6 @@ export default class Result {
       return b.answers - a.answers || a.time - b.time;
     });
 
-    return (statisticsClone.length - statisticsClone.indexOf(statistic) - 1) / statisticsClone.length * 100;
+    return (statisticsClone.length - statisticsClone.indexOf(statistic)) / statisticsClone.length * 100;
   }
 }

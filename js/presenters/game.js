@@ -52,7 +52,7 @@ export default class Game {
         this._view.time = this._timeLeft;
       }
 
-      if (this._state.time > GAME_TIME) {
+      if (this._state.time >= GAME_TIME) {
         this._state = setScore(this._state, 0);
         this._exit();
       }
