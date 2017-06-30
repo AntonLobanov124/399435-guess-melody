@@ -65,22 +65,6 @@ export default class Game {
     return this._questions[this._questionNumber - 1];
   }
 
-  _checkAnswer(isAnswer) {
-    if (isAnswer) {
-      const winScore = this._state.time - this._questionStartTime > QUICK_QUESTION_TIMEOUT ? 1 : 2;
-      this._state = setScore(this._state, this._state.score + winScore);
-      this._state = setAnswers(this._state, this._state.answers + 1);
-    } else {
-      this._state = setLives(this._state, this._state.lives - 1);
-    }
-
-    if (this._state.lives) {
-      this._showQuestion();
-    } else {
-      this._exit();
-    }
-  }
-
   _getLevelArtistView(question) {
     const view = new LevelArtistView(question);
 
@@ -101,27 +85,52 @@ export default class Game {
     return view;
   }
 
+  _getLevelView(question) {
+    let view = null;
+
+    switch (question.type) {
+      case QuestionType.ARTIST:
+        view = this._getLevelArtistView(question);
+        break;
+      case QuestionType.GENRE:
+        view = this._getLevelGenreView(question);
+        break;
+      default:
+        throw new Error(`Unknown question type.`);
+    }
+
+    return view;
+  }
+
   _showQuestion() {
     this._questionNumber++;
-    this._questionStartTime = this._state.time;
-
-    const question = this._getQuestion();
 
     if (this._questionNumber === MAX_QUESTIONS) {
       this._exit();
       return;
     }
 
-    switch (question.type) {
-      case QuestionType.ARTIST:
-        this._view = this._getLevelArtistView(question);
-        break;
-      case QuestionType.GENRE:
-        this._view = this._getLevelGenreView(question);
-        break;
-    }
+    const question = this._getQuestion();
+    this._questionStartTime = this._state.time;
 
+    this._view = this._getLevelView(question);
     this._view.time = this._timeLeft;
     this._view.show();
+  }
+
+  _checkAnswer(isAnswer) {
+    if (isAnswer) {
+      const winScore = this._state.time - this._questionStartTime > QUICK_QUESTION_TIMEOUT ? 1 : 2;
+      this._state = setScore(this._state, this._state.score + winScore);
+      this._state = setAnswers(this._state, this._state.answers + 1);
+    } else {
+      this._state = setLives(this._state, this._state.lives - 1);
+    }
+
+    if (this._state.lives) {
+      this._showQuestion();
+    } else {
+      this._exit();
+    }
   }
 }
