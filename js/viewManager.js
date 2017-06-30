@@ -1,4 +1,4 @@
-﻿const mainNode = document.querySelector(`.main`);
+const mainNode = document.querySelector(`.main`);
 
 export function clearView() {
   mainNode.innerHTML = ``;
