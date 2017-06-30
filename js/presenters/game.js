@@ -86,20 +86,14 @@ export default class Game {
   }
 
   _getLevelView(question) {
-    let view = null;
-
     switch (question.type) {
       case QuestionType.ARTIST:
-        view = this._getLevelArtistView(question);
-        break;
+        return this._getLevelArtistView(question);
       case QuestionType.GENRE:
-        view = this._getLevelGenreView(question);
-        break;
+        return this._getLevelGenreView(question);
       default:
         throw new Error(`Unknown question type.`);
     }
-
-    return view;
   }
 
   _showQuestion() {
